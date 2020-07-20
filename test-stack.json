@@ -1,0 +1,111 @@
+{
+"Resources": {
+    "ssh315AC0F7": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties": {
+            "GroupDescription": "Allow SSH from anywhere",
+            "GroupName": "SSH from anywhere",
+            "SecurityGroupEgress": [
+            {
+                "CidrIp": "0.0.0.0/0",
+                "Description": "Allow all outbound traffic by default",
+                "IpProtocol": "-1"
+            }
+            ],
+            "SecurityGroupIngress": [
+            {
+                "CidrIp": "0.0.0.0/0",
+                "Description": "from 0.0.0.0/0:22",
+                "FromPort": 22,
+                "IpProtocol": "tcp",
+                "ToPort": 22
+            }
+            ],
+            "VpcId": "vpc-42d28b38"
+        },
+        "Metadata": {
+            "aws:cdk:path": "cdk-demo/ssh/Resource"
+        }
+    },
+    "cdkdemoInstanceRole570018BD": {
+        "Type": "AWS::IAM::Role",
+        "Properties": {
+            "AssumeRolePolicyDocument": {
+            "Statement": [
+                {
+                    "Action": "sts:AssumeRole",
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Service": "ec2.amazonaws.com"
+                    }
+                }
+            ],
+            "Version": "2012-10-17"
+            },
+            "Tags": [
+            {
+                "Key": "Name",
+                "Value": "cdk-demo/cdk-demo"
+            }
+            ]
+        },
+        "Metadata": {
+            "aws:cdk:path": "cdk-demo/cdk-demo/InstanceRole/Resource"
+        }
+    },
+    "cdkdemoInstanceProfile3147F4B8": {
+        "Type": "AWS::IAM::InstanceProfile",
+        "Properties": {
+            "Roles": [
+            {
+                "Ref": "cdkdemoInstanceRole570018BD"
+            }
+            ]
+        },
+        "Metadata": {
+            "aws:cdk:path": "cdk-demo/cdk-demo/InstanceProfile"
+        }
+    },
+    "cdkdemo1BD258D9": {
+        "Type": "AWS::EC2::Instance",
+        "Properties": {
+            "AvailabilityZone": "us-east-1a",
+            "IamInstanceProfile": {
+            "Ref": "cdkdemoInstanceProfile3147F4B8"
+            },
+            "ImageId": "ami-03a2cbdcd9e7d1955",
+            "InstanceType": "t2.micro",
+            "SecurityGroupIds": [
+            {
+                "Fn::GetAtt": [
+                    "ssh315AC0F7",
+                    "GroupId"
+                ]
+            }
+            ],
+            "SubnetId": "subnet-2d757e03",
+            "Tags": [
+            {
+                "Key": "Name",
+                "Value": "cdk-demo/cdk-demo"
+            }
+            ],
+            "UserData": {
+            "Fn::Base64": "#!/bin/bash"
+            }
+        },
+        "DependsOn": [
+            "cdkdemoInstanceRole570018BD"
+        ],
+        "Metadata": {
+            "aws:cdk:path": "cdk-demo/cdk-demo/Resource"
+        }
+    },
+    "CDKMetadata": {
+        "Type": "AWS::CDK::Metadata",
+        "Properties": {
+            "Modules": "aws-cdk=1.46.0,@aws-cdk/aws-cloudwatch=1.52.0,@aws-cdk/aws-ec2=1.52.0,@aws-cdk/aws-events=1.52.0,@aws-cdk/aws-iam=1.52.0,@aws-cdk/aws-kms=1.52.0,@aws-cdk/aws-logs=1.52.0,@aws-cdk/aws-s3=1.52.0,@aws-cdk/aws-ssm=1.52.0,@aws-cdk/cloud-assembly-schema=1.52.0,@aws-cdk/core=1.52.0,@aws-cdk/cx-api=1.52.0,@aws-cdk/region-info=1.52.0,jsii-runtime=Python/3.8.1"
+        }
+    }
+}
+}
